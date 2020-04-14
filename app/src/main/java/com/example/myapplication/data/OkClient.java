@@ -63,10 +63,24 @@ public class OkClient {
                 break;
         }
     }
+
+    public String getMovieScreen(String id){
+      url+="movies/"+id;
+      setMode("default");
+      return getResult();
+    }
+
+    public String getMovieInfo(String id){
+      url+="movies/"+id+"/info";
+      setMode("default");
+      return getResult();
+    }
     public void setMode(String mode,String id){
         url+=mode;
         url+="/"+id;
-        Log.e("url",url);
+        if(mode=="movies"){
+          url+="/info";
+        }
         mode="withid";
         setMode(mode);
     }
@@ -87,7 +101,7 @@ public class OkClient {
     }
 
 
-
+    //将请求执行，返回response的字符串
     private String readJ(Call call) throws IOException {
         Response response = call.execute();
         return response.body().string();
@@ -194,7 +208,6 @@ public class OkClient {
                 .post(body)
                 .build();
         result = okHttpClient.newCall(confirm).execute().body().string();
-        Log.e("result",result);
     }
 
     public void payOrder(String cookie) throws IOException {
@@ -219,7 +232,6 @@ public class OkClient {
                 .put(body)
                 .build();
         result = okHttpClient.newCall(confirm).execute().body().string();
-        Log.e("result cancel",result);
     }
 
     public void getOrders(String cookie) throws Exception{

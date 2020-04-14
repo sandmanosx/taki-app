@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FilmBookDetailActivity"
+    android:background="#ffffff">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".FilmBookDetailActivity">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="103dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/shape_screen"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/result"
+                android:layout_width="378dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="0dp"
+                android:gravity="center"
+                android:maxLines="7"
+                android:text="Result"
+                android:textColor="#000000"
+                android:textSize="30sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="400dp"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="102dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="80dp"
+                android:layout_marginLeft="80dp"
+                android:background="@drawable/button_selector"
+                android:text="Films"
+                android:textColor="#fff" />
+
+            <Button
+                android:layout_width="102dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="30dp"
+                android:background="@drawable/button_selector"
+                android:text="Screen"
+                android:textColor="#fff" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll2"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_margin="10dp"
+            android:background="#000000"
+            android:orientation="horizontal"
+            android:padding="3px">
+
+            <Button
+                android:id="@+id/fB0"
+                android:layout_width="108dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:background="#CFA8AA"
+                android:text="IMG" />
+
+            <LinearLayout
+                android:layout_width="265dp"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:gravity="right"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/tv"
+                    android:layout_width="250dp"
+                    android:layout_height="168dp"
+                    android:layout_toRightOf="@id/fB0"
+                    android:layout_weight="8"
+                    android:background="#D6EFDD"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="30sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll3"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_margin="10dp"
+            android:background="#000000"
+            android:orientation="horizontal"
+            android:padding="3px">
+
+            <Button
+                android:id="@+id/fB1"
+                android:layout_width="108dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:background="#CFA8AA"
+                android:text="IMG" />
+
+            <LinearLayout
+                android:layout_width="265dp"
+                android:layout_height="match_parent"
+                android:background="#ffffff"
+                android:gravity="right"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+
+                    android:layout_width="250dp"
+                    android:layout_height="70dp"
+                    android:layout_toRightOf="@id/fB0"
+                    android:layout_weight="8"
+                    android:background="#D6EFDD"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="30sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll4"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_margin="10dp"
+            android:background="#000000"
+            android:orientation="horizontal"
+            android:padding="3px">
+
+            <Button
+                android:id="@+id/fB2"
+                android:layout_width="108dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:background="#CFA8AA"
+                android:text="IMG" />
+
+            <LinearLayout
+                android:layout_width="265dp"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:padding="8dp"
+                android:background="#ffffff"
+                android:orientation="vertical">
+
+                <TextView
+
+                    android:layout_width="250dp"
+                    android:layout_height="168dp"
+                    android:layout_toRightOf="@id/fB0"
+                    android:layout_weight="8"
+                    android:background="#D6EFDD"
+                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="30sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/book_Dbutton0"
+            android:layout_width="match_parent"
+            android:layout_height="43dp"
+            android:layout_marginTop="245dp"
+            android:layout_marginBottom="0dp"
+            android:text="Return" />
+    </LinearLayout>
+</ScrollView>
+

@@ -5,175 +5,182 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.data.OkClient;
+import com.example.myapplication.data.pixelTools;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Text;
 
 public class FilmBookActivity extends AppCompatActivity {
-    private Button b_button, c_button;
-    private ImageView imageView;
+  private Button rbutton,fbutton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_film_book);
-        imageView = findViewById(R.id.fB_1);
-        int empty1 = 1, empty2 = 1;
-        String json = "";
-        String id1 = "", id2 = "";
-        String date = "no date available";
-        String time = "no time available";
-        String screen = "no screen available";
-        String name = "no name get";
-        String blurb = "no blurb get";
-        String director = "no director get";
-        String leadActors = "no leadActors get";
-        String coverName = null;
-        String date1 = "no date available";
-        String time1 = "no time available";
-        String screen1 = "no screen available";
-        SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_film_book);
+    rbutton = findViewById(R.id._return);
+    fbutton = findViewById(R.id._refresh);
+    init();
+    rbutton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        editor.remove("movie");
+        Intent intent = new Intent(FilmBookActivity.this,FilmActivity.class);
+        startActivity(intent);
+      }
+    });
+
+    fbutton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(FilmBookActivity.this,FilmBookActivity.class);
+        startActivity(intent);
+      }
+    });
+  }
+
+  private void init() {
+    LinearLayout screenlist = findViewById(R.id.screens_list);
+    SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+    String movieId = sharedPreferences.getString("movie", "");
+    Thread t = new Thread(new Runnable() {
+      @Override
+      public void run() {
+        String movieInfo = new OkClient().getMovieInfo(movieId);
+        String movieScreens = new OkClient().getMovieScreen(movieId);
         try {
-            json = getIntent().getStringExtra("json");
-            JSONObject jsonObject = new JSONObject(json);
-            name = jsonObject.get("name").toString();
-            blurb = jsonObject.get("blurb").toString();
-            director = jsonObject.get("director").toString();
-            leadActors = jsonObject.get("leadActors").toString();
-            coverName = jsonObject.getString("cover");
-            //获取排片
-            JSONArray screeninglist = (JSONArray) jsonObject.getJSONArray("screenings");
-            JSONObject screening = screeninglist.getJSONObject(0);
-            date = screening.get("date").toString();
-            time = screening.get("time").toString();
-            screen = screening.get("auditoriumId").toString();
-            id1 = screening.get("id").toString();
-            JSONArray a1 = new JSONArray(screening.getString("tickets"));
-            if (a1.isNull(0)) {
-                empty1 = 0;
-            }
-
-            JSONObject screening2 = screeninglist.getJSONObject(1);
-            date1 = screening2.get("date").toString();
-            time1 = screening2.get("time").toString();
-            screen1 = screening2.get("auditoriumId").toString();
-            id2 = screening2.get("id").toString();
-            a1 = new JSONArray(screening2.getString("tickets"));
-            if (a1.isNull(0)) {
-                empty2 = 0;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String finalCoverName = coverName;
-        Thread t = new Thread(new Runnable() {
+          JSONArray screens = new JSONArray(movieScreens);
+          runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (finalCoverName != null) {
-                        Bitmap bitmap = new OkClient().getImg(finalCoverName);
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                imageView.setImageBitmap(bitmap);
-                            }
-                        });
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
+              try {
+                for (int i = 0; i < screens.length(); i++) {
+                  JSONObject screen = screens.getJSONObject(i);
+                  screenlist.addView(setScreensLayout(screen.toString()));
+
                 }
+                setMovieInfo(movieInfo);
+              } catch (Exception e) {
+                e.printStackTrace();
+              }
             }
-        });
-        t.start();
-        String finalId = id1, finalId1 = id2;
-        b_button = findViewById(R.id.go_book_button0);
-        int finalEmpty = empty1;
-        b_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //jump to films
-                Intent intent = new Intent(FilmBookActivity.this, FilmBookDetailActivity.class);
-                intent.putExtra("screenId", finalId);
-                if (finalEmpty == 1) {
-                    editor.putString("screenId", finalId);
-                    editor.commit();
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(FilmBookActivity.this, "No tickets available", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        c_button = findViewById(R.id.go_book_button1);
-        int finalEmpty1 = empty2;
-        c_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(FilmBookActivity.this, FilmBookDetailActivity.class);
-                intent.putExtra("screenId", finalId1);
-                if (finalEmpty1 == 1) {
-                    editor.putString("screenId", finalId1);
-                    editor.commit();
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(FilmBookActivity.this, "No tickets available", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        b_button = findViewById(R.id.book_btn0);
-        b_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //return
-                Intent intent = new Intent(FilmBookActivity.this, FilmActivity.class);
-                startActivity(intent);
-            }
-        });
+          });
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+      }
+    });
+    t.start();
 
+  }
 
-        b_button = findViewById(R.id.book_btn1);
-        b_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //return
-                Intent intent = new Intent(FilmBookActivity.this, FilmBookActivity.class);
-                startActivity(intent);
-            }
-        });
+  private void setMovieInfo(String data)throws Exception {
+    JSONObject movieInfo = new JSONObject(data);
 
-        // 设置显示更改ui
-        TextView Mname = findViewById(R.id.fB_3);
-        Mname.setText(name);
-        TextView Mblurb = findViewById(R.id.bl_1);
-        Mblurb.setText(blurb);
-        Mblurb.append("...");
+    String name = movieInfo.getString("name");
+    String blurb = movieInfo.getString("blurb");
+    String coverName = movieInfo.getString("cover");
+    String director = movieInfo.getString("director");
 
-        TextView Mdirt = findViewById(R.id.dir_1);
-        Mdirt.setText(director);
+    //生成包含所有actor的列表
+    String[] actors = movieInfo.getString("leadActors").split(",");
 
-        TextView MAct = findViewById(R.id.act_2);
-        MAct.setText(leadActors);
+    ImageView coverV = findViewById(R.id.cover);
+    TextView titleV = findViewById(R.id.name);
+    TextView blurbV = findViewById(R.id.blurb);
 
-        TextView MScreen = findViewById(R.id.screening_1);
-        MScreen.setText(date + "\n");
-        MScreen.append(time + "\n");
-        MScreen.append("cinemaScreen: " + screen);
+    titleV.setText(name);
+    blurbV.setText(blurb);
 
-        TextView MScreen1 = findViewById(R.id.screening_2);
-        MScreen1.setText(date1 + "\n");
-        MScreen1.append(time1 + "\n");
-        MScreen1.append("cinemaScreen: " + screen1);
+    if(coverName!="null"){
+      Thread m = new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            Bitmap bitmap = new OkClient().getImg(coverName);
+            runOnUiThread(new Runnable() {
+              @Override
+              public void run() {
+                coverV.setImageBitmap(bitmap);
+              }
+            });
+          } catch (Exception e) {
+            e.printStackTrace();
+          }
+        }
+      });
+      m.start();
     }
+  }
+
+  private LinearLayout setScreensLayout(String data) throws Exception {
+    JSONObject screen = new JSONObject(data);
+
+    String id = screen.getString("id");
+    String date = screen.getString("date");
+    String startTime = screen.getString("time");
+    String finishTime = screen.getString("finishTime");
+    String price = screen.getString("originalPrice");
+    String room = screen.getString("auditoriumId");
+
+    LinearLayout layout = new LinearLayout(FilmBookActivity.this);
+
+    int padding = pixelTools.dip2px(FilmBookActivity.this, 2);
+    int margin = pixelTools.dip2px(FilmBookActivity.this, 10);
+
+    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, pixelTools.dip2px(FilmBookActivity.this, 120));
+    layoutParams.setMargins(margin, margin, margin, margin);
+    layout.setPadding(padding, padding, padding, padding);
+    layout.setBackgroundColor(Color.parseColor("#000000"));
+    layout.setOrientation(LinearLayout.HORIZONTAL);
+    layout.setLayoutParams(layoutParams);
+
+    TextView content = new TextView(FilmBookActivity.this);
+    LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(pixelTools.dip2px(FilmBookActivity.this, 10), LinearLayout.LayoutParams.MATCH_PARENT, 8);
+    content.setBackgroundColor(Color.parseColor("#146974"));
+    content.setTextColor(Color.parseColor("#ffffff"));
+    content.setTextSize(20);
+    content.setLayoutParams(contentParams);
+    content.setText("date: "+date+"\nfrom "+startTime+" to "+finishTime+"\nprice: "+price+"\nroom: "+room);
+
+    Button ticketing = new Button(FilmBookActivity.this);
+    LinearLayout.LayoutParams buttonParams = new LinearLayout.LayoutParams(pixelTools.dip2px(FilmBookActivity.this, 10), LinearLayout.LayoutParams.MATCH_PARENT, 3);
+    ticketing.setBackgroundResource(R.drawable.ticket);
+    ticketing.setLayoutParams(buttonParams);
+
+    layout.addView(content);
+    layout.addView(ticketing);
+
+    ticketing.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(FilmBookActivity.this,FilmBookDetailActivity.class);
+        SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("id",id);
+        editor.commit();
+        startActivity(intent);
+      }
+    });
+
+    return layout;
+
+  }
 }
 
