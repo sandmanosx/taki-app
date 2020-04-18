@@ -4,11 +4,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Cookie;
@@ -26,9 +31,11 @@ import okhttp3.ResponseBody;
 public class OkClient {
     private OkHttpClient okHttpClient = new OkHttpClient();
     private String url, result = new String(),cookie="";
+    private Integer rowMax=0,colMax=0;
     public OkClient() {
         this.url = "http://106.12.203.34:8080/";
     }
+    public OkClient(String cookie){this.url="http://106.12.203.34:8080/"; this.cookie = cookie;}
 
     private void ResetUrl() {
         this.url = "http://106.12.203.34:8080/";
@@ -64,6 +71,30 @@ public class OkClient {
         }
     }
 
+  public String getMoviesData(){
+    try {
+      setMode("movies");
+      result = new JSONObject(result).getString("content");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return result;
+  }
+  public String getScreensData(){
+    try {
+      setMode("screenings");
+      result = new JSONObject(result).getString("content");
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return result;
+  }
+
+    public String getScreenInfo(String id){
+      url+="screenings/"+id;
+      setMode("default");
+      return getResult();
+    }
     public String getMovieScreen(String id){
       url+="movies/"+id;
       setMode("default");
@@ -136,23 +167,10 @@ public class OkClient {
         try{
             Response response = call.execute();
             result = response.body().string();
+            Log.e("response",result);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //尝试使用enqueue来进行异步处理，但好像我要的是同步处理，就此放弃
-        /**call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.e("post","failed");
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                result = response.body().string();
-                System.out.println("result is"+result);
-            }
-        });*/
     }
     //获取电影列表模块
     private void getMovies() {
@@ -191,23 +209,19 @@ public class OkClient {
     }*/
 
     //上传选座信息
-    public void sendTicket(ArrayList<String> ticketsList,String cookie,String discountNumber) throws IOException {
+    public String sendTicket(ArrayList<String> ticketsList,String cookie,String screenId) throws IOException {
         OkHttpClient okHttpClient = new OkHttpClient();
-        List<Integer> ticketsId = new ArrayList<>();
-        for(int i=0;i<ticketsList.size();i++){
-            String Sid = ticketsList.get(i);
-            ticketsId.add(Integer.valueOf(Sid));
-        }
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, ticketsId.toString());
+        RequestBody body = RequestBody.create(mediaType, ticketsList.toString());
 
         Request confirm = new Request.Builder()
-                .url(url+"orders/"+discountNumber)
+                .url(url+"orders/screenings/"+screenId)
                 .header("cookie","JSESSIONID="+cookie)
                 .addHeader("Content-Type","application/json")
                 .post(body)
                 .build();
-        result = okHttpClient.newCall(confirm).execute().body().string();
+        String result = okHttpClient.newCall(confirm).execute().body().string();
+        return result;
     }
 
     public void payOrder(String cookie) throws IOException {
@@ -220,6 +234,7 @@ public class OkClient {
                 .put(body)
                 .build();
         result = okHttpClient.newCall(confirm).execute().body().string();
+        Log.e("confirm response",result);
     }
 
     public void cancelOrder(String cookie) throws IOException{
@@ -232,21 +247,37 @@ public class OkClient {
                 .put(body)
                 .build();
         result = okHttpClient.newCall(confirm).execute().body().string();
+        Log.e("cancel response",result);
     }
 
-    public void getOrders(String cookie) throws Exception{
+    public String getOrder(String id) throws  Exception{
+      OkHttpClient okHttpClient = new OkHttpClient();
+      Request request = new Request.Builder()
+        .url(url+"orders/"+id)
+        .header("cookie","JSESSIONID="+cookie)
+        .build();
+      result = okHttpClient.newCall(request).execute().body().string();
+      Log.e("get order response",result);
+      return result;
+
+    }
+
+
+    public String getOrders(String cookie) throws Exception{
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url+"users/orders")
                 .header("cookie","JSESSIONID="+cookie)
                 .build();
         result = okHttpClient.newCall(request).execute().body().string();
+        return result;
     }
 
     public Bitmap getImg(String name) throws Exception{
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url+ "file/" +name)
+                .addHeader("Cookie","JSESSIONID="+cookie)
                 .build();
         ResponseBody body = okHttpClient.newCall(request).execute().body();
         InputStream in = body.byteStream();
@@ -261,5 +292,108 @@ public class OkClient {
                 .build();
         result = okHttpClient.newCall(request).execute().body().string();
         return result;
+    }
+
+    //获取影厅可用的所有座位
+    public ArrayList<HashMap> GetAllSeat(String auditoriumId) {
+      ArrayList<HashMap> seats = new ArrayList<>();
+      OkHttpClient client = new OkHttpClient().newBuilder()
+        .build();
+      Request request = new Request.Builder()
+        .url("http://106.12.203.34:8080/seats/auditoriums/"+auditoriumId)
+        .method("GET", null)
+        .addHeader("Cookie", "JSESSIONID="+cookie)
+        .build();
+      try {
+        result = client.newCall(request).execute().body().string();
+        JSONArray jsonArray = new JSONArray(result);
+        for (int i = 0; i < jsonArray.length(); i++) {
+          JSONObject seat = jsonArray.getJSONObject(i);
+          int row = seat.getInt("row");
+          int col = seat.getInt("col");
+          if (rowMax < row)
+            rowMax = row;
+          if (colMax < col)
+            colMax = col;
+          HashMap<Integer, Integer> position = new HashMap<>();
+          position.put(row, col);
+          HashMap<HashMap, JSONObject> seatData = new HashMap<>();
+          seatData.put(position, seat);
+          seats.add(seatData);
+        }
+      }catch (Exception e){
+        e.printStackTrace();
+      }
+      return seats;
+    }
+
+    //获取需要建立的影厅尺寸
+    public JSONObject getSize() throws Exception{
+      JSONObject size = new JSONObject();
+      size.put("row",this.rowMax);
+      size.put("col",this.colMax);
+      return size;
+    }
+
+    //获取当前排片被占用的座位
+    public ArrayList<HashMap> seatTaken(String screenId) throws Exception{
+      OkHttpClient okHttpClient = new OkHttpClient();
+      Request request = new Request.Builder()
+        .url(url+"tickets/screenings/"+screenId)
+        .header("Cookie","JSESSIONID="+cookie)
+        .build();
+      String result = okHttpClient.newCall(request).execute().body().string();
+      Log.e("seatsTaken",result);
+      JSONArray jsonArray = new JSONArray(result);
+      ArrayList<HashMap> seats = new ArrayList<>();
+      for(int i =0;i<jsonArray.length();i++) {
+        JSONObject seat = jsonArray.getJSONObject(i);
+        int row = seat.getInt("row");
+        int col = seat.getInt("col");
+        if(row>rowMax)
+          rowMax=row;
+        if(col>colMax)
+          colMax = col;
+        HashMap<Integer,Integer> position = new HashMap<>();
+        position.put(row,col);
+        HashMap<HashMap,JSONObject> seatData = new HashMap<>();
+        seatData.put(position,seat);
+        seats.add(seatData);
+      }
+      return seats;
+    }
+
+    //通过screenId获取博放映厅的编号id
+    public String getAuditoruimId(String screenId) throws Exception {
+      OkHttpClient okHttpClient = new OkHttpClient();
+      Request request = new Request.Builder()
+        .get()
+        .url(url+"screenings/"+screenId)
+        .header("Cookie","JSESSIONID="+cookie)
+        .build();
+      String result = okHttpClient.newCall(request).execute().body().string();
+      String id = new JSONObject(result).getString("auditoriumId");
+      return id;
+    }
+
+    public void logout() throws IOException {
+      OkHttpClient okHttpClient = new OkHttpClient();
+      Request request = new Request.Builder()
+        .get()
+        .url(url+"logout")
+        .addHeader("Cookie","JSESSIONID="+cookie)
+        .build();
+      String result = okHttpClient.newCall(request).execute().body().string();
+      Log.e("response",result);
+    }
+
+    public String getSeatsPosition(Integer id) throws Exception {
+      OkHttpClient okHttpClient = new OkHttpClient();
+      Request request = new Request.Builder()
+        .url(url+"seats/"+id)
+        .addHeader("Cookie","JSESSIONID="+cookie)
+        .build();
+      String result = okHttpClient.newCall(request).execute().body().string();
+      return result;
     }
 }

@@ -43,10 +43,9 @@ public class LoginDataSource {
                     cookie[0] = OkClient.getCookie();
                     try {
                         JSONObject connect = new JSONObject(response_string);
-                        if (connect.has("user")) {
+                        if (connect.has("username")) {
                             Log.e("log in ", "succussful");
-                            JSONObject userinfo = new JSONObject(connect.get("user").toString());
-                            user[0] = userinfo.get("username").toString();
+                            user[0] = connect.get("username").toString();
                             flag[0] = true;
                         } else {
                             Log.e("log in", "failed");

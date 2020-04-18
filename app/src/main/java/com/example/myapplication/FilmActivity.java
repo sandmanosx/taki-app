@@ -37,64 +37,60 @@ import android.widget.Toast;
 
 import com.example.myapplication.data.OkClient;
 import com.example.myapplication.data.ResolveJson;
+import com.example.myapplication.ui.login.LoginActivity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 
 
 public class FilmActivity extends AppCompatActivity{
 
-    private Button rButton,sButton,fButton;
+    private Button uButton,searchButton,cButton,screenButton;
     private EditText editText;
-    //计划使用一个按钮的list来动态管理所有按钮
-    private Button[] ButtonList;
-    private LinearLayout[] resultList;
-    private String screenData,movieData;
+    private LinearLayout movielist;
+    private String movieData,cookie;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_film);
-        rButton = findViewById(R.id._return);
-        sButton = findViewById(R.id.search_button);
-        fButton = findViewById(R.id.refresh);
+        uButton = findViewById(R.id.user);
+        searchButton = findViewById(R.id.search_button);
+        cButton = findViewById(R.id.cinema);
+        screenButton = findViewById(R.id.screen);
+        movielist = findViewById(R.id.movies_list);
 
         final Bitmap[] bitmap = {null};
 
         //获取本地存储数据
         SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        String cookie = sharedPreferences.getString("cookie", "");
+        cookie = sharedPreferences.getString("cookie", "");
         //初始化各种数据
         init();
 
         //搜索模块
         editText = findViewById(R.id.search_view);
-
-        sButton.setOnClickListener(new View.OnClickListener() {
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String keyword = editText.getText().toString();
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        OkClient okClient = new OkClient();
+              String keyword = editText.getText().toString();
+                        OkClient okClient = new OkClient(cookie);
                         try {
-                            JSONArray searchresult = new JSONArray(new ResolveJson(okClient.getSearch(keyword)).readSearch());
-                            Intent intent = new Intent(FilmActivity.this,SearchResActivity.class);
+                            Intent intent = new Intent(FilmActivity.this,FilmSearchActivity.class);
+                            intent.putExtra("keyword",keyword);
                             startActivity(intent);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                    }
-                });
-                t.start();
+
             }
         });
 
-        fButton.setOnClickListener(new View.OnClickListener() {
+        cButton.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
             Intent intent = new Intent(FilmActivity.this,FilmActivity.class);
@@ -102,20 +98,59 @@ public class FilmActivity extends AppCompatActivity{
           }
         });
 
-        rButton.setOnClickListener(new View.OnClickListener() {
+        //用户界面模块
+
+        uButton.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
+            Intent intent = null;
+              SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
+              String cookie = sharedPreferences.getString("cookie","");
+              if(cookie!=null&&cookie!=""){
+                intent = new Intent(FilmActivity.this,FilmUserActivity.class);
+              }else{
+                intent = new Intent(FilmActivity.this, LoginActivity.class);
+              }
+              startActivity(intent);
+          }
+        });
+        Button logout = findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Thread logout = new Thread(new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  new OkClient(cookie).logout();
+                } catch (IOException e) {
+                  e.printStackTrace();
+                }
+              }
+            });
+            logout.start();
+            SharedPreferences sharedPreferences = getSharedPreferences("login",MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove("cookie");
+            editor.commit();
+          }
+        });
 
+        screenButton.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            Intent intent = new Intent(FilmActivity.this,ScreenActivity.class);
+            startActivity(intent);
           }
         });
     }
     //初始化界面
     private void init(){
+        movielist.removeAllViews();
         Thread t = new Thread(new Runnable() {
           @Override
           public void run() {
-            LinearLayout movielist = findViewById(R.id.movies_list);
-            movieData=getMoviesData();
+            movieData=new OkClient().getMoviesData();
             try {
               JSONArray movies = new JSONArray(movieData);
               for(int index=0;index<movies.length();index++){
@@ -153,17 +188,17 @@ public class FilmActivity extends AppCompatActivity{
       LinearLayout layout = new LinearLayout(FilmActivity.this);
 
       //设置相关margin和padding
-      int margin = dip2px(FilmActivity.this,10);
+      int margin = dip2px(FilmActivity.this,20);
       int lpadding = dip2px(FilmActivity.this,1);
       int tpadding = dip2px(FilmActivity.this,8);
 
 
-      LinearLayout.LayoutParams lLayoutlayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,dip2px(FilmActivity.this,173));
-      lLayoutlayoutParams.setMargins(margin,margin,margin,margin);
+      LinearLayout.LayoutParams lLayoutlayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,dip2px(FilmActivity.this,143));
+      lLayoutlayoutParams.setMargins(margin,0,margin,0);
       layout.setLayoutParams(lLayoutlayoutParams);
       // 设置属性
       layout.setBackgroundColor(Color.parseColor("#000000"));	//
-      layout.setPadding(lpadding,lpadding,lpadding,lpadding);
+      layout.setPadding(0,lpadding,lpadding,lpadding);
       layout.setOrientation(LinearLayout.HORIZONTAL);
 
       //以下为下载图片部分
@@ -171,13 +206,14 @@ public class FilmActivity extends AppCompatActivity{
       LinearLayout.LayoutParams imgViewParams = new LinearLayout.LayoutParams(dip2px(FilmActivity.this,108),ViewGroup.LayoutParams.MATCH_PARENT,4);
       cover.setLayoutParams(imgViewParams);
       cover.setImageResource(R.mipmap.ic_launcher_round);
-      cover.setBackgroundColor(Color.parseColor("#CFA8AA"));
+      cover.setBackgroundColor(Color.parseColor("#ECECEC"));
       if (covername != "null") {
         Thread m = new Thread(new Runnable() {
           @Override
           public void run() {
             try {
-              Bitmap bitmap = new OkClient().getImg(covername);
+              Log.e("cookie",cookie);
+              Bitmap bitmap = new OkClient(cookie).getImg(covername);
               runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -203,10 +239,10 @@ public class FilmActivity extends AppCompatActivity{
 
       TextView context = new TextView(FilmActivity.this);
       LinearLayout.LayoutParams contextparams = new LinearLayout.LayoutParams(dip2px(FilmActivity.this,250),ViewGroup.LayoutParams.MATCH_PARENT,8);
-      context.setBackgroundColor(Color.parseColor("#D6EFDD"));
+      context.setBackgroundColor(Color.parseColor("#ffffff"));
       context.setGravity(Gravity.CENTER);
       context.setTextColor(Color.parseColor("#000000"));
-      context.setTextSize(30);
+      context.setTextSize(18);
       context.setLayoutParams(contextparams);
       context.setText(name+"\n"+blurb);
 
@@ -231,25 +267,10 @@ public class FilmActivity extends AppCompatActivity{
       return layout;
     }
 
-    private String getMoviesData(){
-      final String[] res = {""};
-          try {
-            OkClient OkClient = new OkClient();
-            OkClient.setMode("movies");
-            String result = OkClient.getResult();
-            result = new JSONObject(result).getString("content");
-            JSONArray array = new JSONArray(result);
-            JSONArray resultArray = new JSONArray();
-            res[0]=result;
-          } catch (Exception e) {
-            e.printStackTrace();
-          }
-      return res[0];
+    private int dip2px(Context context, float dipValue) {
+      Resources r = context.getResources();
+      return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dipValue, r.getDisplayMetrics());
     }
-  private int dip2px(Context context, float dipValue)
-  {
-    Resources r = context.getResources();
-    return (int) TypedValue.applyDimension(
-      TypedValue.COMPLEX_UNIT_DIP, dipValue, r.getDisplayMetrics());
-  }
+
+
 }

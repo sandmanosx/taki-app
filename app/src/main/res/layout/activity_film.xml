@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
@@ -7,117 +8,180 @@
   android:orientation="vertical">
 
 
-  <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:background="#707EB1"
-    android:orientation="horizontal">
 
-    <FrameLayout
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:layout_weight="1">
-
-      <EditText
-        android:id="@+id/search_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="10dp"
-        android:background="#f0f0f0"
-        android:drawablePadding="5dp"
-        android:hint="Input"
-        android:imeOptions="actionSearch"
-        android:inputType="text"
-        android:textSize="16sp" />
-    </FrameLayout>
-
-    <Button
-      android:id="@+id/search_button"
-      android:layout_width="60dp"
-      android:layout_height="30dp"
-      android:layout_gravity="center_vertical"
-      android:layout_marginTop="10dp"
-      android:layout_marginRight="10dp"
-      android:layout_marginBottom="10dp"
-      android:background="#5769B1"
-      android:text="Search" />
-  </LinearLayout>
-
-  <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="650dp"
-    android:layout_weight="1">
-
-    <ScrollView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:background="#DFE1F8"
-      tools:context=".FilmActivity">
-
-
+        android:layout_height="650dp"
+      android:orientation="vertical"
+        android:layout_weight="1">
       <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#4A5BB5"
+        android:orientation="horizontal">
+
+        <FrameLayout
+          android:layout_weight="1"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content">
+
+          <EditText
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:background="#f0f0f0"
+            android:drawablePadding="5dp"
+            android:textSize="16sp"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:hint="Input"/>
+          <ImageView
+            android:background="@drawable/search_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:visibility="visible"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="right|center_vertical"/>
+        </FrameLayout>
+
+        <Button
+          android:id="@+id/search_button"
+          android:layout_width="60dp"
+          android:layout_height="19dp"
+          android:layout_gravity="center_vertical"
+          android:layout_marginTop="10dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginBottom="10dp"
+          android:background="#4A5BB5"
+          android:text="Search"
+          android:textColor="#fff" />
+      </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#fff">
+
+
+    <LinearLayout
         android:id="@+id/movies_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         tools:context=".FilmActivity">
 
 
-        <LinearLayout
-          android:id="@+id/ll2"
-          android:layout_width="match_parent"
-          android:layout_height="173dp"
-          android:layout_margin="10dp"
-          android:background="#000000"
-          android:orientation="horizontal"
-          android:padding="1dp">
 
-          <ImageView
-            android:id="@+id/fB0"
-            android:layout_width="108dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:background="#CFA8AA"
-            android:src="@mipmap/ic_launcher" />
-
-          <LinearLayout
-            android:layout_width="265dp"
-            android:layout_height="match_parent"
-            android:background="#ffffff"
-            android:gravity="right"
-            android:orientation="vertical"
-            android:padding="8dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:orientation="vertical">
 
             <TextView
-              android:id="@+id/tv"
-              android:layout_width="250dp"
-              android:layout_height="168dp"
-              android:layout_weight="8"
-              android:background="#D6EFDD"
-              android:gravity="center"
-              android:textAlignment="center"
-              android:textColor="#000000"
-              android:textSize="30sp" />
-          </LinearLayout>
+                android:id="@+id/fB_3"
+                android:layout_width="271dp"
+                android:layout_height="match_parent"
+                android:background="#fff"
+                android:layout_marginLeft="4dp"
+                android:text="Hot Showing"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+
+        </RelativeLayout>
+
+
+
+
+        <LinearLayout
+            android:id="@+id/ll2"
+            android:layout_width="match_parent"
+            android:layout_height="143dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:background="#000000"
+            android:orientation="horizontal"
+            android:paddingBottom="1dp">
+
+            <ImageView
+                android:id="@+id/fB0"
+                android:layout_width="108dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:background="#ECECEC" />
+
+            <LinearLayout
+                android:layout_width="265dp"
+                android:layout_height="match_parent"
+                android:gravity="right"
+                android:padding="8dp"
+                android:background="#ffffff"
+                android:orientation="horizontal">
+
+                <TextView
+                android:id="@+id/tv"
+                android:layout_width="250dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8"
+                android:background="#fff"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="18sp" />
+
+            </LinearLayout>
         </LinearLayout>
 
 
-      </LinearLayout>
+    </LinearLayout>
 
-    </ScrollView>
-  </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#4A5BB5"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/cinema"
+            android:layout_width="94dp"
+            android:layout_marginLeft="4dp"
+            android:layout_height="wrap_content"
+            android:text="Cinema"/>
+        <Button
+            android:id="@+id/logout"
+            android:layout_marginLeft="4dp"
+            android:layout_width="94dp"
+            android:layout_height="wrap_content"
+            android:text="logout"/>
+
+        <Button
+          android:id="@+id/screen"
+            android:layout_marginLeft="4dp"
+            android:layout_width="94dp"
+            android:layout_height="wrap_content"
+            android:text="screen"/>
+
+        <Button
+            android:id="@+id/user"
+            android:layout_width="94dp"
+            android:layout_marginLeft="4dp"
+            android:layout_height="wrap_content"
+            android:text="User"/>
 
 
-  <Button
-    android:id="@+id/_return"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Return" />
 
-  <Button
-    android:id="@+id/refresh"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:text="Refresh" />
-</LinearLayout>
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+
+
+

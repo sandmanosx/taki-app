@@ -25,7 +25,11 @@
         <activity android:name=".FilmBookActivity" />
         <activity android:name=".FilmActivity" />
         <activity android:name=".FilmBookDetailActivity" />
-        <activity android:name=".testActivity"/>
+        <activity android:name=".FilmUserActivity"/>
+        <activity android:name=".PayActivity"/>
+        <activity android:name=".ScreenActivity"/>
+        <activity android:name=".FilmSearchActivity"/>
+
     </application>
 
 </manifest>

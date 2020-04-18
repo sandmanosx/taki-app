@@ -6,10 +6,10 @@
     <corners android:radius="360dip"/>
     <!-- padding: Button 里面的文字与Button边界的间隔 -->
     <padding
-        android:left="5dp"
-        android:top="5dp"
-        android:right="5dp"
-        android:bottom="5dp"
+        android:left="2dp"
+        android:top="1dp"
+        android:right="2dp"
+        android:bottom="2dp"
         />
 
 </shape>

@@ -26,15 +26,20 @@ import org.w3c.dom.Text;
 
 public class FilmBookActivity extends AppCompatActivity {
   private Button rbutton,fbutton;
+  private String cookie = null;
+  private LinearLayout screenlist;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
+    cookie = sharedPreferences.getString("cookie","");
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_film_book);
     rbutton = findViewById(R.id._return);
     fbutton = findViewById(R.id._refresh);
+
+    screenlist = findViewById(R.id.screens_list);
     init();
     rbutton.setOnClickListener(new View.OnClickListener() {
       @Override
@@ -55,7 +60,6 @@ public class FilmBookActivity extends AppCompatActivity {
   }
 
   private void init() {
-    LinearLayout screenlist = findViewById(R.id.screens_list);
     SharedPreferences sharedPreferences = getSharedPreferences("login", MODE_PRIVATE);
     SharedPreferences.Editor editor = sharedPreferences.edit();
     String movieId = sharedPreferences.getString("movie", "");
@@ -113,7 +117,7 @@ public class FilmBookActivity extends AppCompatActivity {
         @Override
         public void run() {
           try {
-            Bitmap bitmap = new OkClient().getImg(coverName);
+            Bitmap bitmap = new OkClient(cookie).getImg(coverName);
             runOnUiThread(new Runnable() {
               @Override
               public void run() {
