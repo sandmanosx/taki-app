@@ -6,98 +6,67 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="650dp"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_weight="1">
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="#4A5BB5"
+        android:orientation="horizontal">
 
-        <RelativeLayout
-            android:background="#fff"
+        <FrameLayout
+          android:layout_weight="1"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content">
+
+          <EditText
+            android:id="@+id/search_view"
             android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_marginTop="15dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="10dp"
+            android:background="#f0f0f0"
+            android:drawablePadding="5dp"
+            android:textSize="16sp"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:hint="Input"/>
+          <ImageView
+            android:background="@drawable/search_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:visibility="visible"
+            android:layout_marginRight="20dp"
+            android:layout_gravity="right|center_vertical"/>
+        </FrameLayout>
 
-            <TextView
-                android:layout_marginStart="15dp"
-                android:layout_width="138dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="4dp"
-                android:background="#fff"
-                android:text="Movies"
-                android:textColor="#000"
-                android:textSize="17sp" />
-
-        </RelativeLayout>
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:padding="10dp"
-            android:background="#f1f1f1"
-            android:paddingRight="10dp">
-
-
-            <LinearLayout
-                android:id="@+id/covers"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:background="#fff"
-                android:paddingRight="5dp"
-                android:padding="5dp">
-
-                <ImageView
-                    android:id="@+id/dir_1"
-                    android:layout_width="100dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_height="match_parent"
-                    android:background="#f1f1f1"
-                    android:src="@mipmap/ic_launcher"
-                    android:gravity="center"/>
-
-            </LinearLayout>
-        </HorizontalScrollView>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="#fff"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/today"
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="4dp"
-                android:background="@color/date"
-                android:text="Today"
-                android:textColor="#000"
-                android:textSize="12sp" />
-            <Button
-                android:id="@+id/tomorrow"
-                android:layout_width="100dp"
-                android:layout_height="match_parent"
-                android:layout_marginStart="15dp"
-                android:layout_marginLeft="4dp"
-                android:layout_toRightOf="@+id/today"
-                android:background="@color/grey"
-                android:text="Tomorrow"
-                android:textColor="#000"
-                android:textSize="12sp" />
-        </RelativeLayout>
+        <Button
+          android:id="@+id/search_button"
+          android:layout_width="60dp"
+          android:layout_height="19dp"
+          android:layout_gravity="center_vertical"
+          android:layout_marginTop="10dp"
+          android:layout_marginRight="10dp"
+          android:layout_marginBottom="10dp"
+          android:background="#4A5BB5"
+          android:text="Search"
+          android:textColor="#fff" />
+      </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#fff"
             tools:context=".FilmActivity">
+
+
             <LinearLayout
-                android:id="@+id/screens"
+                android:id="@+id/results_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
@@ -105,24 +74,52 @@
 
 
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/search_return"
+                        android:layout_width="90dp"
+                        android:layout_height="40dp"
+                        android:text="Return"/>
+
+
+                    <TextView
+                        android:id="@+id/fB_3"
+                        android:layout_width="100dp"
+                        android:layout_marginStart="100dp"
+                        android:layout_height="match_parent"
+                        android:background="#fff"
+                        android:layout_marginLeft="4dp"
+                        android:text="Result"
+                        android:layout_toRightOf="@+id/search_return"
+                        android:textColor="#000"
+                        android:textSize="20sp" />
+
+
+                </RelativeLayout>
+
+
+
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="143dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginLeft="20dp"
                     android:background="#000000"
                     android:orientation="horizontal"
-                    android:paddingBottom="1dp">
+                    android:paddingBottom="1px">
 
-                    <TextView
-                        android:layout_width="100dp"
+                    <ImageView
+                        android:layout_width="108dp"
                         android:layout_height="match_parent"
                         android:layout_weight="4"
-                        android:gravity="center"
                         android:background="#ECECEC"
-                        android:text="Time"
-                        android:textSize="20dp"/>
+                        android:src="@mipmap/ic_launcher"/>
 
                     <LinearLayout
                         android:layout_width="265dp"
@@ -133,21 +130,17 @@
                         android:orientation="horizontal">
 
                         <TextView
-
                             android:layout_width="250dp"
                             android:layout_height="match_parent"
-                            android:layout_toRightOf="@id/fB0"
                             android:layout_weight="8"
                             android:background="#fff"
                             android:gravity="center"
-                            android:text="details"
                             android:textAlignment="center"
                             android:textColor="#000000"
-                            android:textSize="15sp" />
+                            android:textSize="18sp" />
 
                     </LinearLayout>
                 </LinearLayout>
-
 
             </LinearLayout>
 
@@ -167,14 +160,14 @@
             android:layout_height="wrap_content"
             android:text="Cinema"/>
         <Button
-            android:id="@+id/search"
+            android:id="@+id/bb"
             android:layout_marginLeft="4dp"
             android:layout_width="94dp"
             android:layout_height="wrap_content"
-            android:text="search"/>
+            android:text="#"/>
 
         <Button
-            android:id="@+id/screen"
+          android:id="@+id/screen"
             android:layout_marginLeft="4dp"
             android:layout_width="94dp"
             android:layout_height="wrap_content"
